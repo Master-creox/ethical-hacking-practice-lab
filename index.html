@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethical Hacking Practice Lab</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:#070b14;color:#e8eefc}
+header{padding:18px;background:#0d1b33;border-bottom:2px solid #00e5a0}h1{margin:0;font-size:22px}h1 span{color:#00e5a0}
+p.sub{color:#9fb3d8;margin:6px 0 0}.wrap{max-width:980px;margin:auto;padding:14px}
+.card{background:#101c36;border:1px solid #24365e;border-radius:14px;padding:16px;margin:12px 0}
+button{background:#00e5a0;color:#04121a;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;margin:4px 4px 4px 0}
+button.ghost{background:#1b2a4d;color:#fff}button:disabled{opacity:.5}
+input,textarea,select{width:100%;padding:10px;border-radius:10px;border:1px solid #33456e;background:#0a1428;color:#fff;margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.tool{cursor:pointer}.tool h3{margin:0 0 6px}.badge{display:inline-block;background:#1b2a4d;padding:3px 8px;border-radius:20px;font-size:12px}
+.badge.done{background:#00e5a0;color:#04121a}.coach{background:#102a22;border:1px solid #00e5a0;border-radius:10px;padding:12px;margin:10px 0}
+.err{background:#2a1218;border-color:#ff5a6e}.ok{color:#00e5a0}.warn{color:#ffcf4d}
+.tabs button{margin-right:6px}.hidden{display:none}small{color:#9fb3d8}
+@media(max-width:600px){h1{font-size:19px}.wrap{padding:10px}}
+</style></head><body>
+<header><h1>🛡️ Ethical Hacking <span>Practice Lab</span></h1>
+<p class="sub">Practice only. Own lab only. Mistakes are corrected here — so you become PRO.</p></header>
+<div class="wrap">
+
+<div class="card" id="home">
+<h2>🎯 My Pro Path</h2>
+<p id="levelText"></p>
+<p>Tools mastered: <b id="masteredCount">0</b> / 20 &nbsp;|&nbsp; Tools practised: <b id="practisedCount">0</b> / 20</p>
+<p><b>Next step:</b> <span id="nextStep"></span></p>
+<label><input type="checkbox" id="gate" style="width:auto"> I confirm: my practice targets are MY OWN devices / lab / test apps only, or I have written permission. No real user data is involved.</label>
+<p><small>Without this tick, Practice stays locked. This is your authorization gate — every time.</small></p>
+</div>
+
+<div class="card"><h2>🧰 Tool Library — tap a tool</h2><div class="grid" id="toolGrid"></div></div>
+
+<div class="card" id="terminalCard">
+<h2>💻 Simulator Terminal — yahan practice karo, maza ayega!</h2>
+<p><small>Ye REAL terminal nahi hai — ye ek SAFE simulator hai. Ye koi real network scan, attack ya system change nahi karta. Sirf lab commands (lab IPs / lab URLs) par simulated output deta hai. Galat / dangerous command par coach rok kar samjhayega.</small></p>
+<div id="termOut" style="background:#02060f;border:1px solid #24365e;border-radius:10px;padding:12px;min-height:180px;font-family:monospace;font-size:13px;white-space:pre-wrap;overflow:auto">user@practice-lab:~$ help likho, fir ek lab command try karo. Example: nmap 192.168.1.10
+</div>
+<input id="termIn" placeholder="user@practice-lab:~$  command type karo, Enter dabao — try: help" onkeydown="if(event.key==='Enter')termRun()">
+<button onclick="termRun()">Run ▶</button> <button class="ghost" onclick="termClear()">Clear</button>
+<p><small>Try karo: <code>help</code> • <code>nmap 192.168.1.10</code> • <code>nmap -sV 192.168.1.10</code> • <code>gobuster dir -u http://lab -w mylist.txt</code> • <code>nikto -h http://lab</code> • <code>whoami</code> • <code>ls</code></small></p>
+</div>
+
+<div class="card" id="caseCard">
+<h2>🕵️ Case Solving — Hacking se Case Solve Karo</h2>
+<p><small>Ye sab FICTIONAL lab cases hain — koi real victim, real company ya real data nahi hai. Har case me evidence padho, hacking skills se clue dhoondho, jawab do, coach correct karega, fir case solved mark hoga.</small></p>
+<div class="grid" id="caseGrid"></div>
+<div id="caseView" class="hidden">
+<button class="ghost" onclick="renderCases()">← Back to cases</button>
+<h3 id="caseTitle"></h3><p id="caseStory"></p>
+<div id="caseEvidence"></div>
+<div id="caseQs"></div>
+<div id="caseCoach"></div>
+</div>
+</div>
+
+<div class="card" id="forensicsCard">
+<h2>🔍 Cyber Forensics Lab — Evidence se Sach Dhoondho</h2>
+<p><small>Ye sab FICTIONAL lab forensics scenarios hain — koi real case, real victim ya real data nahi hai. Forensics ka rule yaad rakho: <b>original evidence ko kabhi change mat karo</b> — hamesha copy/image par kaam karo, hash se integrity check karo, aur chain of custody likho.</small></p>
+<h3>📚 Forensics Tools — seekhne layak</h3>
+<ul>
+<li><b>FTK Imager (concept)</b> — Disk ki forensically-sound image banana, bina original ko change kiye. Command concept: image banao, hash note karo.</li>
+<li><b>Autopsy</b> — Disk image ko analyse karna: deleted files, timeline, browser history (lab image par).</li>
+<li><b>Volatility</b> — Memory (RAM) forensics: lab memory dump se running processes, network connections dhoondhna.</li>
+<li><b>Sleuth Kit (fls / icat)</b> — File system se deleted files ki list aur recovery (lab image par).</li>
+<li><b>strings + hash (sha256sum)</b> — File me chhupe text dhoondhna, aur evidence ki integrity hash se verify karna.</li>
+<li><b>Wireshark (forensics use)</b> — Lab network capture se timeline banana: kab, kahan, kya hua.</li>
+</ul>
+<h3>🧪 Forensics Practice — Coach ke saath</h3>
+<div id="forensicsQs"></div>
+<div id="forensicsCoach"></div>
+<h3>🕵️ Forensics Case: Deleted File Recovery (Lab)</h3>
+<p><b>Story:</b> Tumhare OWN lab PC ki test disk image me ek file delete ho gayi hai: <code>secret-notes.txt</code>. Disk image ka hash pehle note kiya tha: <code>abc123</code>. Analysis ke baad hash fir se <code>abc123</code> hi hai. Deleted files ki list me <code>secret-notes.txt</code> dikh raha hai, par uska content abhi recover nahi hua hai.</p>
+<p><b>Questions:</b> Neeche wale practice questions me Q4 aur Q5 isi case ke hain.</p>
+</div>
+
+<div class="card hidden" id="toolView">
+<button class="ghost" onclick="showHome()">← Back to all tools</button>
+<h2 id="toolName"></h2><p><span class="badge" id="toolStatus"></span> &nbsp;<span id="toolLevel"></span></p>
+<div class="tabs">
+<button onclick="showTab('learn')">Learn</button>
+<button onclick="showTab('cmd')">Commands</button>
+<button onclick="showTab('practice')">Practice + Coach</button>
+<button onclick="showTab('challenge')">Challenge</button>
+<button onclick="showTab('notes')">My Notes</button>
+</div>
+<div id="tab-learn"></div>
+<div id="tab-cmd" class="hidden"></div>
+<div id="tab-practice" class="hidden"></div>
+<div id="tab-challenge" class="hidden"></div>
+<div id="tab-notes" class="hidden"></div>
+</div>
+
+<div class="card"><h2>📄 My Report</h2><p id="reportText"></p>
+<button onclick="copyReport()">Copy report text</button>
+<p><small>Report contains only your learning progress — never real-target data.</small></p></div>
+
+</div>
+<script>
+const TOOLS=[
+{id:'nmap',name:'Nmap',tag:'Recon — lab only',learn:'Nmap finds hosts and open ports/services on a network. In a lab you use it to map YOUR OWN test network: which of your lab machines are up, and which services they run. It does not hack anything by itself — it only asks, politely, what is listening.',cmds:[['nmap 192.168.1.10','Scan one lab host for open ports'],['nmap -sV 192.168.1.10','Detect service versions on that lab host'],['nmap -sn 192.168.1.0/24','Ping-scan your OWN lab network — find live hosts, no port scan']],
+ ex:[{q:'Your lab server is 192.168.1.10. Type the command to scan it for open ports.',ans:['nmap 192.168.1.10'],hint:'Start with just: nmap + the IP. No -sV, no -sn yet — those do different jobs.',why:'Plain nmap does a port scan. -sV adds version detection, -sn is only a ping scan (no ports).'} ,
+ {q:'Now detect service versions on the same lab host.',ans:['nmap -sv 192.168.1.10'],hint:'Add -sV (capital V) after nmap.',why:'-sV = service/version detection. Lowercase -s is a different scan type, so capital V matters.'}],
+ quiz:{q:'What does nmap -sn do?',opts:['Port scan','Ping scan — live hosts only, no ports','Password attack'],a:1,why:'-sn disables port scanning. It only finds live hosts.'}},
+{id:'wireshark',name:'Wireshark',tag:'Traffic analysis — own lab traffic only',learn:'Wireshark captures and reads network packets. You use it ONLY on your own lab traffic — e.g. traffic between your own laptop and your own test server — to understand protocols like DNS, HTTP and TCP handshakes. Never capture other people\'s traffic.',cmds:[['Filter: dns','Show only DNS packets'],['Filter: http','Show only HTTP packets'],['Filter: ip.addr == 192.168.1.10','Show packets to/from your lab host']],
+ ex:[{q:'In Wireshark, type the display filter to show only DNS packets.',ans:['dns'],hint:'Just the protocol name, in lowercase.',why:'Display filters use protocol names like dns, http, tcp. No command, no quotes needed.'}],
+ quiz:{q:'You may capture traffic on:',opts:['Any public WiFi you join','Only your own lab traffic / your own devices','Your friend\'s phone without asking'],a:1,why:'Only your own lab traffic. Capturing others without permission is not practice.'}},
+{id:'burp',name:'Burp Suite',tag:'Web testing — own test app only',learn:'Burp Suite is a proxy between your browser and a web app. You use it on YOUR OWN test app to see requests/responses, change a parameter, and understand how the app handles input. It is a learning tool for web security, not a tool to attack real sites.',cmds:[['Proxy: 127.0.0.1:8080','Set your browser proxy to Burp, then browse your OWN test app'],['Intercept: ON → Forward','Capture a request, read it, then forward it'],['Repeater','Resend a captured request with one changed value, on your test app only']],
+ ex:[{q:'To use Burp, your browser proxy must point to Burp on your own machine. Type the usual proxy address.',ans:['127.0.0.1:8080'],hint:'Localhost IP + Burp default port 8080.',why:'127.0.0.1 is your own machine, 8080 is Burp\'s default proxy port.'}],
+ quiz:{q:'Burp practice is allowed on:',opts:['Any website you find','Only your own test app / lab app','A login page you want to test without permission'],a:1,why:'Only your own test/lab app. Real sites without permission are off-limits.'}},
+{id:'metasploit',name:'Metasploit',tag:'Framework — lab vulnerable machines only',learn:'Metasploit is an exploitation framework: it organises exploits, payloads and post-exploitation tools in one place. In practice you use it ONLY against a deliberately vulnerable lab machine you own (e.g. a Metasploitable-style VM), to understand how an exploit chain works and how to fix it.',cmds:[['msfconsole','Start the Metasploit console'],['use exploit/... (lab module)','Select a module for your LAB vulnerable machine only'],['set RHOSTS <lab IP>','Point the module at your LAB machine, never a real host']],
+ ex:[{q:'Type the command to start the Metasploit console.',ans:['msfconsole'],hint:'One word: msf + console.',why:'msfconsole is the main Metasploit interface.'}],
+ quiz:{q:'Metasploit exploits in this lab are for:',opts:['Any server on the internet','Only your own vulnerable lab machine','Any company website'],a:1,why:'Lab machines only. That is the whole point of a practice lab.'}},
+{id:'sqlmap',name:'SQLmap',tag:'SQL injection — own test app only',learn:'SQLmap automates SQL injection testing. You use it ONLY on your own test app that you built with a deliberate SQLi flaw, to learn how injection works and how prepared statements fix it. Testing a real site with SQLmap without permission is an attack, not practice.',cmds:[['sqlmap -u "http://lab/test?id=1"','Test YOUR OWN test URL for SQL injection'],['--dbs','List databases on your OWN test app (lab only)']],
+ ex:[{q:'Type the start of an SQLmap test: sqlmap -u, then your OWN test URL http://lab/test?id=1 (keep quotes).',ans:['sqlmap -u "http://lab/test?id=1"'],hint:'sqlmap -u "URL" — quotes around the URL.',why:'-u tells SQLmap which URL to test. In this lab that URL is always your own test app.'}],
+ quiz:{q:'SQLmap practice target must be:',opts:['A real shopping site','Your own test app with a deliberate flaw','Any site with a login form'],a:1,why:'Your own test app only.'}},
+{id:'hydra-john',name:'Hydra / John',tag:'Password testing — own test accounts only',learn:'Hydra tests logins and John cracks password hashes — in a lab, against YOUR OWN test accounts and YOUR OWN test password lists. The lesson is why weak passwords fail fast. You never test real accounts, and you never use someone else\'s password list.',cmds:[['hydra -l testuser -P mylist.txt ssh://lab-ip','Test YOUR OWN lab login with YOUR OWN list (lab only)'],['john --wordlist=mylist.txt myhash.txt','Crack YOUR OWN lab hash with YOUR OWN list']],
+ ex:[{q:'You made a test account "testuser" on your lab. Type the start: hydra -l testuser -P mylist.txt — then the service, ssh://lab-ip',ans:['hydra -l testuser -p mylist.txt ssh://lab-ip','hydra -l testuser -P mylist.txt ssh://lab-ip'],hint:'-l = login name, -P = password LIST file (capital P), then ssh://lab-ip.',why:'-P (capital) is a file of passwords. Small -p is a single password — different meaning.'}],
+ quiz:{q:'Password testing in this lab uses:',opts:['Real accounts','Your own test accounts + your own lists','Leaked passwords from the internet'],a:1,why:'Own test accounts and own lists only.'}},
+{id:'nikto',name:'Nikto',tag:'Web recon — own test server only',learn:'Nikto scans a web server for known misconfigurations and outdated software. Use it ONLY on your own test server, then fix what it finds — that fix is the real learning.',cmds:[['nikto -h http://lab','Scan YOUR OWN test web server']],
+ ex:[{q:'Type the Nikto command to scan your own test server at http://lab',ans:['nikto -h http://lab'],hint:'nikto -h + URL.',why:'-h = host to scan. Here the host is always your lab.'}],
+ quiz:{q:'Nikto finds:',opts:['Passwords','Known web server issues / outdated software','Private user data'],a:1,why:'It reports known issues, so you can fix them.'}},
+{id:'netcat',name:'Netcat / Networking',tag:'Foundation tools',learn:'Netcat is the Swiss-army knife of networking: it can listen, connect, and move data over TCP/UDP. Learn it first and every other tool makes more sense — because you understand ports, connections and banners from the ground up.',cmds:[['nc -zv 192.168.1.10 80','Check if port 80 is open on your LAB host'],['nc -lvnp 4444','Listen on your OWN machine (lab listener practice)']],
+ ex:[{q:'Check if port 80 is open on your lab host 192.168.1.10 using nc -zv.',ans:['nc -zv 192.168.1.10 80'],hint:'nc -zv IP PORT.',why:'-z = scan mode (no data sent), -v = verbose, then IP and port.'}],
+ quiz:{q:'nc -lvnp 4444 does:',opts:['Hacks a server','Listens on your own machine on port 4444','Steals data'],a:1,why:'-l = listen, on your own machine, for lab practice.'}},
+{id:'gobuster',name:'Gobuster',tag:'Directory brute-force — own lab only',learn:'Gobuster finds hidden directories and files on a web server by trying words from a list. Use it ONLY on your own test web app, to learn why hidden admin pages must not rely on secrecy alone.',cmds:[['gobuster dir -u http://lab -w mylist.txt','Find directories on YOUR OWN test app'],['gobuster dns -d lab.local -w mylist.txt','Find subdomains for YOUR OWN lab domain']],
+ ex:[{q:'Find directories on your own test app http://lab with wordlist mylist.txt. Type: gobuster dir -u http://lab -w mylist.txt',ans:['gobuster dir -u http://lab -w mylist.txt'],hint:'gobuster dir -u URL -w wordlist.',why:'dir mode = directories, -u = URL, -w = wordlist.'}],
+ quiz:{q:'Gobuster dir mode finds:',opts:['Passwords','Hidden directories/files on a web server','WiFi keys'],a:1,why:'It brute-forces directory names from a wordlist.'}},
+{id:'ffuf',name:'FFUF',tag:'Web fuzzing — own lab only',learn:'FFUF (Fuzz Faster U Fool) fuzzes web parameters, directories and subdomains very fast. Use it ONLY on your own test app, to learn how fuzzing finds hidden inputs — and why input validation matters.',cmds:[['ffuf -u http://lab/FUZZ -w mylist.txt','Fuzz directories on YOUR OWN test app (FUZZ = wordlist word)']],
+ ex:[{q:'Fuzz directories on http://lab with FFUF. Type: ffuf -u http://lab/FUZZ -w mylist.txt',ans:['ffuf -u http://lab/fuzz -w mylist.txt'],hint:'-u URL with FUZZ placeholder, -w wordlist.',why:'FUZZ is replaced by each wordlist word, one request at a time.'}],
+ quiz:{q:'In FFUF, FUZZ means:',opts:['A virus','The placeholder replaced by each wordlist word','A password'],a:1,why:'FUZZ is the injection point.'}},
+{id:'hashcat',name:'Hashcat',tag:'Hash cracking — own lab hashes only',learn:'Hashcat cracks password hashes using wordlists and rules, very fast on a GPU. In this lab you crack ONLY hashes you created yourself for test accounts, to learn why long, unique passwords matter.',cmds:[['hashcat -m 0 myhash.txt mylist.txt','Crack MD5 hashes from YOUR OWN lab file']],
+ ex:[{q:'Crack your own lab MD5 hashes with Hashcat. Type: hashcat -m 0 myhash.txt mylist.txt',ans:['hashcat -m 0 myhash.txt mylist.txt'],hint:'-m 0 = MD5 mode, then hash file, then wordlist.',why:'-m sets the hash type. 0 = MD5 in Hashcat.'}],
+ quiz:{q:'Hashcat practice hashes must be:',opts:['From a real breach','Hashes you created for your own test accounts','Any hash online'],a:1,why:'Own lab hashes only.'}},
+{id:'zap',name:'OWASP ZAP',tag:'Web scanner — own test app only',learn:'OWASP ZAP is a free web application scanner and proxy, like a friendlier Burp. Use it ONLY on your own test app to find common web issues, then fix them.',cmds:[['ZAP Automated Scan: http://lab','Run an automated scan on YOUR OWN test app']],
+ ex:[{q:'In ZAP, what do you enter to scan your own test app? Answer with the test URL: http://lab',ans:['http://lab'],hint:'Just your own test app URL.',why:'ZAP needs a target URL — in this lab always your own test app.'}],
+ quiz:{q:'ZAP is mainly for:',opts:['WiFi hacking','Web app scanning on your own app','Phone hacking'],a:1,why:'It scans web apps for common issues.'}},
+{id:'nuclei',name:'Nuclei',tag:'Template scanning — own targets only',learn:'Nuclei scans targets using community templates for known vulnerabilities. Use it ONLY on your own lab targets, to learn how known CVEs are detected — and patched.',cmds:[['nuclei -u http://lab','Scan YOUR OWN test app with Nuclei templates']],
+ ex:[{q:'Scan your own test app http://lab with Nuclei. Type: nuclei -u http://lab',ans:['nuclei -u http://lab'],hint:'nuclei -u URL.',why:'-u = single target URL.'}],
+ quiz:{q:'Nuclei templates check for:',opts:['Known vulnerabilities using templates','Passwords','WiFi signals'],a:1,why:'Each template is a check for a known issue.'}},
+{id:'amass',name:'Amass',tag:'Subdomain enumeration — own domain only',learn:'Amass finds subdomains of a domain using many sources. Use it ONLY on a domain you own or have permission to test, to map your own attack surface.',cmds:[['amass enum -d lab.local','Enumerate subdomains of YOUR OWN lab domain']],
+ ex:[{q:'Enumerate subdomains of your own lab domain lab.local with Amass. Type: amass enum -d lab.local',ans:['amass enum -d lab.local'],hint:'amass enum -d domain.',why:'enum = enumeration mode, -d = domain.'}],
+ quiz:{q:'Amass enum finds:',opts:['Subdomains','Passwords','WiFi networks'],a:1,why:'It maps subdomains from many sources.'}},
+{id:'subfinder',name:'Subfinder',tag:'Subdomain discovery — own domain only',learn:'Subfinder is a fast subdomain discovery tool. Like Amass, use it ONLY on your own domain, to see what subdomains the internet can already see about you.',cmds:[['subfinder -d lab.local','Find subdomains of YOUR OWN lab domain']],
+ ex:[{q:'Find subdomains of lab.local with Subfinder. Type: subfinder -d lab.local',ans:['subfinder -d lab.local'],hint:'subfinder -d domain.',why:'-d = domain to discover subdomains for.'}],
+ quiz:{q:'Subfinder is used for:',opts:['Cracking hashes','Subdomain discovery','WiFi attacks'],a:1,why:'Passive subdomain discovery.'}},
+{id:'dirb',name:'Dirb',tag:'Directory brute-force — own lab only',learn:'Dirb is an older, simple directory brute-forcer for web servers. Use it ONLY on your own test app — it teaches the same lesson as Gobuster: hidden does not mean secure.',cmds:[['dirb http://lab','Scan YOUR OWN test app for directories']],
+ ex:[{q:'Scan your own test app http://lab with Dirb. Type: dirb http://lab',ans:['dirb http://lab'],hint:'dirb + URL, nothing else needed for a basic scan.',why:'Dirb takes the URL and tries its built-in wordlist.'}],
+ quiz:{q:'Dirb is a:',opts:['Password cracker','Web directory scanner','WiFi tool'],a:1,why:'It scans for directories/files on a web server.'}},
+{id:'aircrack',name:'Aircrack-ng',tag:'WiFi lab — OWN WiFi only, permission required',learn:'Aircrack-ng tests WiFi security: capture, handshake analysis and password testing. In this lab it is ONLY for YOUR OWN WiFi network, with your own router and your own test passwords — never a neighbour, cafe or office network.',cmds:[['aircrack-ng -w mylist.txt mycapture.cap','Test YOUR OWN WiFi capture with YOUR OWN list (own network only)']],
+ ex:[{q:'Test your OWN WiFi capture with Aircrack-ng. Type: aircrack-ng -w mylist.txt mycapture.cap',ans:['aircrack-ng -w mylist.txt mycapture.cap'],hint:'aircrack-ng -w wordlist capture-file.',why:'-w = wordlist, then the capture file from YOUR OWN network.'}],
+ quiz:{q:'Aircrack-ng practice is allowed on:',opts:['Any WiFi you can see','Only your own WiFi network','A cafe WiFi'],a:1,why:'Only your own network, with your own router.'}},
+{id:'wpscan',name:'WPScan',tag:'WordPress scanning — own WP lab only',learn:'WPScan scans WordPress sites for known plugins, themes and vulnerabilities. Use it ONLY on your own WordPress test site, then update/patch what it finds.',cmds:[['wpscan --url http://lab-wp','Scan YOUR OWN WordPress test site']],
+ ex:[{q:'Scan your own WordPress test site http://lab-wp with WPScan. Type: wpscan --url http://lab-wp',ans:['wpscan --url http://lab-wp'],hint:'wpscan --url URL.',why:'--url = target WordPress site, here your own lab site.'}],
+ quiz:{q:'WPScan checks:',opts:['WordPress plugins/themes/vulnerabilities','Android apps','WiFi passwords'],a:1,why:'It is WordPress-specific.'}},
+{id:'enum4linux',name:'Enum4linux',tag:'SMB enumeration — own lab only',learn:'Enum4linux enumerates SMB/Windows information: users, shares, policies. Use it ONLY on your own lab Windows/VM machine, to learn what SMB leaks when it is misconfigured.',cmds:[['enum4linux 192.168.1.20','Enumerate YOUR OWN lab Windows machine']],
+ ex:[{q:'Enumerate your own lab Windows machine 192.168.1.20 with Enum4linux. Type: enum4linux 192.168.1.20',ans:['enum4linux 192.168.1.20'],hint:'enum4linux + IP.',why:'It takes the target IP and runs SMB enumeration checks.'}],
+ quiz:{q:'Enum4linux targets:',opts:['SMB/Windows enumeration','Web apps only','WiFi'],a:0,why:'SMB = Windows file-sharing protocol.'}},
+{id:'harvester',name:'The Harvester',tag:'OSINT — own domain only',learn:'The Harvester gathers public OSINT about a domain: emails, subdomains, hosts from public sources. Use it ONLY on your own domain / organisation you have permission to research, to see what is already public about you.',cmds:[['theHarvester -d lab.local -b google','Gather OSINT for YOUR OWN lab domain']],
+ ex:[{q:'Gather OSINT for your own lab domain lab.local via Google source. Type: theHarvester -d lab.local -b google',ans:['theharvester -d lab.local -b google'],hint:'theHarvester -d domain -b source.',why:'-d = domain, -b = source (google here).'}],
+ quiz:{q:'The Harvester gathers:',opts:['Private passwords','Public OSINT: emails, subdomains, hosts','WiFi keys'],a:1,why:'Only public sources, for your own domain.'}}
+];
+let state={};
+try{state=JSON.parse(localStorage.getItem('ehpl-v1')||'{}')}catch(e){state={}}
+function save(){try{localStorage.setItem('ehpl-v1',JSON.stringify(state))}catch(e){/* storage blocked (preview/private mode) — keep progress in memory only */}}
+function status(id){return state[id]||'Not Started'}
+function renderHome(){
+ let mastered=TOOLS.filter(t=>status(t.id)==='Mastered').length;
+ let practised=TOOLS.filter(t=>['Practising','Challenged','Mastered'].includes(status(t.id))).length;
+ document.getElementById('masteredCount').textContent=mastered;
+ document.getElementById('practisedCount').textContent=practised;
+ let lvl=mastered>=20?'PRO 🏆':mastered>=10?'Advanced':practised>=5?'Intermediate':'Beginner';
+ document.getElementById('levelText').innerHTML='Your level: <b>'+lvl+'</b>';
+ let next=TOOLS.find(t=>status(t.id)!=='Mastered');
+ document.getElementById('nextStep').textContent=next?next.name+' — '+status(next.id)+'. Open it and do Learn → Practice → Challenge.': 'All core tools mastered. You are PRO — now build your lab report.';
+ document.getElementById('reportText').textContent='Akash Kumar — Ethical Hacking Practice Lab | Level: '+lvl+' | Tools mastered: '+mastered+'/20 | Tools practised: '+practised+'/20 | Practice scope: own lab only.';
+ document.getElementById('toolGrid').innerHTML=TOOLS.map(t=>`<div class="card tool" onclick="openTool('${t.id}')"><h3>${t.name}</h3><p>${t.tag}</p><span class="badge ${status(t.id)==='Mastered'?'done':''}">${status(t.id)}</span></div>`).join('');
+}
+let cur=null,curEx=0;
+function showHome(){document.getElementById('toolView').classList.add('hidden');renderHome()}
+function openTool(id){cur=TOOLS.find(t=>t.id===id);curEx=0;
+ document.getElementById('toolView').classList.remove('hidden');
+ document.getElementById('toolName').textContent=cur.name;
+ document.getElementById('toolStatus').textContent=status(id);
+ document.getElementById('toolLevel').textContent=cur.tag;
+ document.getElementById('tab-learn').innerHTML='<p>'+cur.learn+'</p><p><b>Your path for this tool:</b> Learn → Practice (coach corrects mistakes) → Challenge → Mastered.</p>';
+ document.getElementById('tab-cmd').innerHTML=cur.cmds.map(c=>`<p><code>${c[0]}</code><br><small>${c[1]}</small></p>`).join('');
+ renderPractice();renderChallenge();
+ document.getElementById('tab-notes').innerHTML='<p>Write what you learned, and what mistake you corrected. It saves on this device.</p><textarea id="noteBox" rows="6" placeholder="My notes for '+cur.name+'...">'+(state['note-'+id]||'')+'</textarea><button onclick="saveNote()">Save notes</button>';
+ showTab('learn');window.scrollTo(0,document.getElementById('toolView').offsetTop);
+}
+function showTab(n){['learn','cmd','practice','challenge','notes'].forEach(k=>document.getElementById('tab-'+k).classList.toggle('hidden',k!==n))}
+function gateOk(){if(!document.getElementById('gate').checked){alert('First tick the authorization gate on Home: your targets are your own lab only.');return false}return true}
+function renderPractice(){
+ let ex=cur.ex[curEx];
+ document.getElementById('tab-practice').innerHTML=`<p><b>Practice ${curEx+1}/${cur.ex.length}:</b> ${ex.q}</p><input id="ansBox" placeholder="Type your answer / command here"><button onclick="checkPractice()">Check — Coach will correct me</button><button class="ghost" onclick="showHint()">Hint</button><div id="coachBox"></div><p><small>Lab target only. This is simulated practice — it does not scan or attack anything from your browser.</small></p>`;
+}
+function norm(s){return s.trim().toLowerCase().replace(/\s+/g,' ')}
+function checkPractice(){
+ if(!gateOk())return;
+ let v=norm(document.getElementById('ansBox').value);let ex=cur.ex[curEx];
+ let ok=ex.ans.some(a=>norm(a)===v);
+ let box=document.getElementById('coachBox');
+ if(ok){box.innerHTML=`<div class="coach"><b class="ok">✅ Correct! Well done.</b><p>${ex.why}</p><button onclick="nextEx()">Next practice / Mark practised</button></div>`;
+   if(status(cur.id)==='Not Started'||status(cur.id)==='Learning'){state[cur.id]='Practising';save();renderHome();document.getElementById('toolStatus').textContent=status(cur.id)}
+ } else {
+   box.innerHTML=`<div class="coach err"><b>❌ Not quite — coach correction:</b><p><b>What was wrong:</b> That is not the expected answer for this lab task. ${ex.hint}</p><p><b>Correct version:</b> <code>${ex.ans[0]}</code></p><p><b>Why:</b> ${ex.why}</p><p>Try again below — type the correct version yourself, that is how it sticks.</p></div>`;
+   state['mistake-'+cur.id]=(state['mistake-'+cur.id]||0)+1;save();
+ }
+}
+function showHint(){let ex=cur.ex[curEx];document.getElementById('coachBox').innerHTML=`<div class="coach"><b>💡 Hint:</b> ${ex.hint}</div>`}
+function nextEx(){if(curEx<cur.ex.length-1){curEx++;renderPractice()}else{alert('Practice done for '+cur.name+'. Now try the Challenge tab to move toward Mastered.');showTab('challenge')}}
+function renderChallenge(){
+ let q=cur.quiz;
+ document.getElementById('tab-challenge').innerHTML=`<p><b>Challenge:</b> ${q.q}</p>`+q.opts.map((o,i)=>`<button onclick="checkQuiz(${i})">${o}</button>`).join('')+`<div id="quizBox"></div>`;
+}
+function checkQuiz(i){
+ if(!gateOk())return;
+ let q=cur.quiz;let box=document.getElementById('quizBox');
+ if(i===q.a){box.innerHTML=`<div class="coach"><b class="ok">✅ Correct — challenge passed!</b><p>${q.why}</p></div>`;state[cur.id]='Mastered';save();renderHome();document.getElementById('toolStatus').textContent='Mastered'}
+ else{box.innerHTML=`<div class="coach err"><b>❌ Coach correction:</b> That option is not right. <b>Why:</b> ${q.why} — read it, then try again. The correct answer is: <b>${q.opts[q.a]}</b></div>`}
+}
+function saveNote(){state['note-'+cur.id]=document.getElementById('noteBox').value;save();alert('Notes saved on this device.')}
+function copyReport(){let t=document.getElementById('reportText').textContent;if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>alert('Report copied.')).catch(()=>alert(t))}else{alert(t)}}
+function termPrint(s){let o=document.getElementById('termOut');o.textContent+= '\n'+s;o.scrollTop=o.scrollHeight}
+function termClear(){document.getElementById('termOut').textContent='user@practice-lab:~$ Terminal cleared. help likho.'}
+function termRun(){
+ let inp=document.getElementById('termIn');let raw=inp.value.trim();if(!raw)return;inp.value='';
+ let cmd=norm(raw);termPrint('user@practice-lab:~$ '+raw);
+ if(cmd==='clear'){termClear();return}
+ if(cmd==='help'){termPrint('SIMULATOR COMMANDS (lab only):\n- nmap 192.168.1.10\n- nmap -sv 192.168.1.10\n- nmap -sn 192.168.1.0/24\n- gobuster dir -u http://lab -w mylist.txt\n- ffuf -u http://lab/fuzz -w mylist.txt\n- nikto -h http://lab\n- nuclei -u http://lab\n- whoami | ls | pwd\nCoach tip: sirf lab IPs/URLs use karo. Real target par ye simulator kuch nahi karega.');return}
+ if(/rm\s+-rf|mkfs|dd\s+if=|shutdown|reboot/.test(cmd)){termPrint('⛔ COACH BLOCK: Ye dangerous command simulator me allowed nahi hai. Real system par aisa kabhi mat chalana bina samjhe. Lab me sirf safe practice commands use karo.');return}
+ if(/192\.168\.1\.(?!10\b|0\/24|20\b)|google\.com|facebook|instagram|8\.8\.8\.8/.test(cmd)){termPrint('⛔ COACH: Simulator sirf LAB targets par kaam karta hai (192.168.1.10, lab, lab.local). Real / public target yahan allowed nahi hai.');return}
+ const OUT={
+  'nmap 192.168.1.10':'Starting Nmap (simulated, lab only)...\nHost 192.168.1.10 is up.\nPORT   STATE SERVICE\n22/tcp open  ssh\n80/tcp open  http\n443/tcp open https\n[Coach] 3 ports khule dikhe. Ab socho: har open port ka matlab kya hai? 80 = web server.',
+  'nmap -sv 192.168.1.10':'Starting Nmap -sV (simulated)...\n22/tcp open  ssh  OpenSSH 8.9\n80/tcp open  http  Apache 2.4\n[Coach] Version pata chal gaya. Purana version = fix karne ka hint, exploit karne ka nahi.',
+  'nmap -sn 192.168.1.0/24':'Ping scan (simulated, own lab network)...\nLive hosts: 192.168.1.1, 192.168.1.10, 192.168.1.20\n[Coach] -sn sirf live hosts batata hai, ports nahi.',
+  'gobuster dir -u http://lab -w mylist.txt':'Gobuster (simulated, own lab app)...\n/admin (Status: 301)\n/login (Status: 200)\n[Coach] Hidden pages mil gayi. Lesson: hidden != secure. Ab in pages ka access control check karo — lab me.',
+  'ffuf -u http://lab/fuzz -w mylist.txt':'FFUF (simulated)...\nadmin  [Status: 301]\nbackup [Status: 200]\n[Coach] FUZZ har wordlist word se replace hua. Backup page milna ek bada hint hai — lab me use fix karo.',
+  'nikto -h http://lab':'Nikto (simulated, own lab server)...\n- Server: Apache 2.4 (old version hint)\n- /admin/ found\n[Coach] Ab Nikto report ko fix list banao, attack list nahi.',
+  'nuclei -u http://lab':'Nuclei (simulated)...\n[info] Apache version disclosure (lab template)\n[Coach] Template ne known issue bataya. Fix = version update + header hardening.',
+  'whoami':'akash-lab-user\n[Coach] Tum lab user ho. Real system par whoami ka matlab alag hota hai — lab me hi practice karo.',
+  'ls':'Desktop  Documents  lab-notes.txt  practice-lab\n[Coach] Lab folder saaf rakho: notes yahan save karo.',
+  'pwd':'/home/akash-lab-user\n[Coach] Tum lab home directory me ho.'
+ };
+ if(OUT[cmd]){termPrint(OUT[cmd]);
+   let toolId=cmd.startsWith('nmap')?'nmap':cmd.startsWith('gobuster')?'gobuster':cmd.startsWith('ffuf')?'ffuf':cmd.startsWith('nikto')?'nikto':cmd.startsWith('nuclei')?'nuclei':null;
+   if(toolId && (status(toolId)==='Not Started'||status(toolId)==='Learning')){state[toolId]='Practising';save();renderHome()}
+   return}
+ termPrint('🤔 COACH: Ye command simulator me nahi mili. Galat nahi, bas abhi supported nahi hai.\nTry karo: help — fir wahan se ek lab command chuno, ya kisi tool ke Practice tab me jaake sahi command seekho.');
+}
+const CASES=[
+{id:'case1',title:'Case 1: Lab Website Defaced',story:'Tumhare OWN lab ki test website ka homepage achanak badal gaya hai. Homepage par likha hai "Hacked by Test". Koi real site nahi hai — ye tumhara lab test app hai. Tumhe pata lagana hai: attacker andar kaise aaya, aur fix kya hai.',evidence:['Lab log: 192.168.1.50 se 200 baar /login?id=1\' OR \'1\'=\'1 par request aayi','Lab log: Uske baad /admin page bina login ke khul gaya','Test app code me login query me user input seedha SQL me joda gaya tha, prepared statement nahi tha'],
+ qs:[{q:'Attacker ne kaunsi vulnerability use ki? (ek word: SQL injection / XSS / Brute force)',ans:['sql injection','sqli'],why:'Log me OR 1=1 dikh raha hai — ye classic SQL injection pattern hai.'},{q:'Fix kya hai? (prepared statement / strong password — kaunsa?)',ans:['prepared statement','prepared statements','parameterized query'],why:'Prepared statement user input ko code se alag rakhta hai, SQL injection band ho jata hai.'}]},
+{id:'case2',title:'Case 2: Lab Phishing Email',story:'Tumhare lab test mailbox me ek email aaya hai: "Urgent: Apna password verify karo" — link hai http://lab-secure-login.com (note: ye lab ka fake domain hai, real bank nahi). Ek lab user ne click kar diya. Tumhe batana hai ye phishing kyun hai, aur agla step kya hai.',evidence:['Sender: support@lab-secure-login.com — lab ka real domain lab.local hai, ye nahi','Link: http:// (https nahi) + domain naam real jaisa dikhne wala, par alag','Email me dhamki: "24 ghante me account band ho jayega"'],
+ qs:[{q:'Ye email phishing kyun hai? Sabse bada clue kya hai? (domain mismatch / sender mismatch — likho: domain)',ans:['domain','domain mismatch','sender mismatch'],why:'Real domain lab.local hai, email wale ka domain alag hai — ye sabse bada clue hai.'},{q:'Click karne ke baad pehla sahi step kya hai? (password change / report — likho: report)',ans:['report','report phishing','password change'],why:'Pehle report karo aur password change karo — dono sahi hain, par report se team ko pata chalta hai aur doosre bach jaate hain.'}]},
+{id:'case3',title:'Case 3: Lab Server Brute Force',story:'Tumhare OWN lab server ke logs me raat ko 5000 failed login attempts dikhe — ek hi IP 192.168.1.99 se, user "admin" par. Server lab ka hai, koi real server nahi. Tumhe batana hai attack kya tha, aur defence kya hai.',evidence:['Log: 5000 failed logins, user=admin, IP=192.168.1.99, time 2am-4am','Lab server par admin ka password tha: admin123 (weak, test password)','Koi successful login log me nahi hai — abhi tak'],
+ qs:[{q:'Ye attack kya tha? (brute force / SQL injection)',ans:['brute force','bruteforce'],why:'Ek hi user par hazaron password try karna = brute force.'},{q:'Sabse pehla defence kya hai? (strong password / account lockout — likho: lockout)',ans:['lockout','account lockout','strong password'],why:'Account lockout kuch galat attempts ke baad login band kar deta hai, brute force slow ho jata hai. Strong password bhi zaroori hai.'}]}
+];
+let curCase=null;
+function renderCases(){
+ document.getElementById('caseView').classList.add('hidden');
+ document.getElementById('caseGrid').innerHTML=CASES.map(c=>{let s=state['case-'+c.id]||'Not Solved';return `<div class="card tool" onclick="openCase('${c.id}')"><h3>${c.title}</h3><span class="badge ${s==='Solved'?'done':''}">${s}</span></div>`}).join('');
+}
+function openCase(id){curCase=CASES.find(c=>c.id===id);
+ document.getElementById('caseView').classList.remove('hidden');
+ document.getElementById('caseTitle').textContent=curCase.title;
+ document.getElementById('caseStory').textContent=curCase.story;
+ document.getElementById('caseEvidence').innerHTML='<b>Evidence (lab logs / clues):</b><ul>'+curCase.evidence.map(e=>`<li>${e}</li>`).join('')+'</ul>';
+ document.getElementById('caseQs').innerHTML=curCase.qs.map((q,i)=>`<p><b>Q${i+1}:</b> ${q.q}</p><input id="caseAns${i}" placeholder="Apna jawab type karo"><button onclick="checkCase(${i})">Check — Coach</button>`).join('');
+ document.getElementById('caseCoach').innerHTML='';
+ window.scrollTo(0,document.getElementById('caseCard').offsetTop);
+}
+function checkCase(i){
+ if(!gateOk())return;
+ let v=norm(document.getElementById('caseAns'+i).value);let q=curCase.qs[i];let box=document.getElementById('caseCoach');
+ if(q.ans.some(a=>v.includes(a))){box.innerHTML=`<div class="coach"><b class="ok">✅ Sahi! Case clue solved.</b><p>${q.why}</p></div>`;
+   let solved=curCase.qs.every((qq,j)=>{let vv=document.getElementById('caseAns'+j);return vv&&q.ans.some(a=>norm(vv.value).includes(a))});
+   // simpler: mark solved if this was last question and all filled correctly — check all inputs
+   let allOk=true;curCase.qs.forEach((qq,j)=>{let vv=document.getElementById('caseAns'+j);if(!vv||!qq.ans.some(a=>norm(vv.value).includes(a)))allOk=false});
+   if(allOk){state['case-'+curCase.id]='Solved';save();renderCases();box.innerHTML+=`<p><b>🎉 CASE SOLVED!</b> Tumne ${curCase.title} poora solve kar liya. Report me ye case bhi count hoga.</p>`}
+ } else {box.innerHTML=`<div class="coach err"><b>❌ Coach correction:</b> Ye jawab is clue se match nahi hua. Evidence fir se padho — ${q.why}</div>`}
+}
+const FORENSICS=[
+{q:'Forensics ka pehla rule kya hai? Original evidence ko: (change karo / kabhi change mat karo — likho: change mat karo)',ans:['change mat karo','never change','do not change'],why:'Original evidence ko kabhi change mat karo. Hamesha uski COPY / IMAGE par analysis karo, warna evidence court me invalid ho sakta hai.'},
+{q:'Evidence ki integrity kaise verify karte hain? (hash / password — likho: hash)',ans:['hash'],why:'Hash (jaise sha256) ek fingerprint hai. Agar file badli to hash badal jayega. Isliye pehle aur baad me hash compare karte hain.'},
+{q:'Chain of custody ka matlab kya hai? (evidence kis-kis ke paas raha, iska record / file ka naam — likho: record)',ans:['record'],why:'Chain of custody = evidence kab, kahan, kis ke paas raha, iska poora record. Bina iske evidence par bharosa nahi hota.'},
+{q:'Deleted File case: Image ka hash pehle abc123 tha, baad me bhi abc123 hai. Iska matlab kya hai? (integrity ok / tampered — likho: ok)',ans:['ok','integrity ok','not tampered'],why:'Hash same hai = image change nahi hui, integrity ok hai. Ab is image par safely analysis kar sakte ho.'},
+{q:'Deleted file ko recover karne ke liye kaunsa concept use hoga? (file carving / sleuth kit — likho: carving)',ans:['carving','sleuth','file carving'],why:'Deleted file ka data abhi disk par ho sakta hai, bas pointer hata hai. File carving / Sleuth Kit se use dhoondh ke recover karte hain — original image par nahi, copy par.'}
+];
+function renderForensics(){
+ document.getElementById('forensicsQs').innerHTML=FORENSICS.map((q,i)=>`<p><b>Q${i+1}:</b> ${q.q}</p><input id="forAns${i}" placeholder="Apna jawab type karo"><button onclick="checkForensics(${i})">Check — Coach</button>`).join('');
+}
+function checkForensics(i){
+ if(!gateOk())return;
+ let v=norm(document.getElementById('forAns'+i).value);let q=FORENSICS[i];let box=document.getElementById('forensicsCoach');
+ if(q.ans.some(a=>v.includes(a))){box.innerHTML=`<div class="coach"><b class="ok">✅ Sahi! Forensics concept clear.</b><p>${q.why}</p></div>`;
+   let allOk=true;FORENSICS.forEach((qq,j)=>{let vv=document.getElementById('forAns'+j);if(!vv||!qq.ans.some(a=>norm(vv.value).includes(a)))allOk=false});
+   if(allOk){state['forensics']='Done';save();box.innerHTML+=`<p><b>🎉 FORENSICS PRACTICE DONE!</b> Tumne saare forensics questions + deleted file case ke concepts clear kar liye.</p>`}
+ } else {box.innerHTML=`<div class="coach err"><b>❌ Coach correction:</b> Ye jawab match nahi hua. <b>Samjho:</b> ${q.why}</div>`}
+}
+renderHome();
+renderCases();
+renderForensics();
+</script></body></html>
